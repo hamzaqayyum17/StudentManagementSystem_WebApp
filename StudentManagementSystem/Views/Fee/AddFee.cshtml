@@ -1,0 +1,22 @@
+@using System.Data
+@{ ViewData["Title"] = "Add Fee"; }
+<div class="page-header"><div><div class="page-title">Add Fee Record</div><div class="page-subtitle">Create a new fee entry</div></div><a asp-controller="Fee" asp-action="ViewFees" class="btn-back">&larr; Back</a></div>
+<div class="form-card">
+    <form method="post">
+        <div class="form-group">
+            <label class="form-label">Student</label>
+            <select name="sid" class="form-control-custom">
+                @foreach (DataRow row in ViewBag.Students.Rows) { <option value="@row["sid"]">@row["name"] (@row["sid"])</option> }
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Month</label>
+            <select name="month" class="form-control-custom">
+                @foreach (var m in new[]{"January 2025","February 2025","March 2025","April 2025","May 2025","June 2025","July 2025","August 2025","September 2025","October 2025","November 2025","December 2025"})
+                { <option value="@m">@m</option> }
+            </select>
+        </div>
+        <div class="form-group"><label class="form-label">Amount (Rs.)</label><input type="number" name="amount" class="form-control-custom" placeholder="e.g. 5000" /></div>
+        <div style="display:flex;gap:10px;margin-top:8px;"><button type="submit" class="btn-primary-custom">Add Fee Record</button><a asp-controller="Fee" asp-action="ViewFees" class="btn-back">Cancel</a></div>
+    </form>
+</div>

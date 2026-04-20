@@ -1,0 +1,29 @@
+﻿@model List<dynamic>
+@{
+    ViewData["Title"] = "Enrollments";
+}
+<div class="page-header">
+    <div><div class="page-title">Enrollments</div><div class="page-subtitle">All student course enrollments</div></div>
+    <a asp-controller="Enrollment" asp-action="AddEnrollment" class="btn-primary-custom"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>Add Enrollment</a>
+</div>
+<div class="table-wrapper">
+    <div class="table-toolbar"><div><div class="table-title">All Enrollments</div><div class="table-count">@Model.Count records</div></div></div>
+    <table class="data-table">
+        <thead><tr><th>#</th><th>Student</th><th>Course</th><th>Grade</th><th>Actions</th></tr></thead>
+        <tbody>
+            @foreach (var e in Model)
+            {
+                var grade = e.grade.ToString();
+                var gc = grade == "A" || grade == "A+" ? "#4f46e5" : grade == "B" || grade == "B+" ? "#0ea5e9" : grade == "C" || grade == "C+" ? "#d97706" : "#ef4444";
+                var gb = grade == "A" || grade == "A+" ? "#eff6ff" : grade == "B" || grade == "B+" ? "#e0f2fe" : grade == "C" || grade == "C+" ? "#fef3c7" : "#fef2f2";
+                <tr>
+                    <td style="font-family:'DM Mono',monospace;font-size:12px;color:#94a3b8;">#@e.eid</td>
+                    <td style="font-weight:500;">@e.studentName</td>
+                    <td style="color:#64748b;">@e.courseName</td>
+                    <td><span style="background:@gb;color:@gc;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;">@grade</span></td>
+                    <td><a asp-controller="Enrollment" asp-action="Delete" asp-route-eid="@e.eid" class="btn-delete" onclick="return confirm('Delete this enrollment?')">Delete</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

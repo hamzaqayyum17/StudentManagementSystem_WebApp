@@ -1,0 +1,61 @@
+@using System.Data
+@{ ViewData["Title"] = "Mark Attendance"; }
+<div class="page-header">
+    <div><div class="page-title">Mark Attendance</div><div class="page-subtitle">@DateTime.Now.ToString("dddd, dd MMMM yyyy")</div></div>
+</div>
+<div class="table-wrapper">
+    <div class="table-toolbar">
+        <div><div class="table-title">Today's Attendance</div><div class="table-count">Mark Present / Absent / Late for each student</div></div>
+    </div>
+    <form method="post">
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Student Name</th><th>ID</th><th style="min-width:260px;">Status</th></tr></thead>
+            <tbody>
+                @{ int i = 1; }
+                @foreach (DataRow row in ViewBag.Students.Rows) {
+                    var sid = row["sid"].ToString();
+                    <tr>
+                        <td style="color:#94a3b8;font-size:13px;">@i</td>
+                        <td><div style="display:flex;align-items:center;gap:10px;"><div style="width:32px;height:32px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4f46e5;">@row["name"].ToString().Substring(0,1).ToUpper()</div><span style="font-weight:500;">@row["name"]</span></div></td>
+                        <td style="font-family:'DM Mono',monospace;font-size:12px;color:#94a3b8;">@sid</td>
+                        <td>
+                            <div style="display:flex;gap:8px;">
+                                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px 14px;border-radius:8px;border:1.5px solid #e2e8f0;font-size:13px;transition:all 0.15s;" onclick="this.style.background='#dcfce7';this.style.borderColor='#10b981';this.style.color='#15803d';resetOthers(this)">
+                                    <input type="radio" name="status_@sid" value="Present" style="display:none;" checked /> ✓ Present
+                                </label>
+                                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px 14px;border-radius:8px;border:1.5px solid #e2e8f0;font-size:13px;transition:all 0.15s;" onclick="this.style.background='#fef2f2';this.style.borderColor='#ef4444';this.style.color='#dc2626';resetOthers(this)">
+                                    <input type="radio" name="status_@sid" value="Absent" style="display:none;" /> ✗ Absent
+                                </label>
+                                <label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px 14px;border-radius:8px;border:1.5px solid #e2e8f0;font-size:13px;transition:all 0.15s;" onclick="this.style.background='#fef3c7';this.style.borderColor='#f59e0b';this.style.color='#d97706';resetOthers(this)">
+                                    <input type="radio" name="status_@sid" value="Late" style="display:none;" /> ⏰ Late
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+        <div style="padding:16px 20px;border-top:1px solid #f1f5f9;">
+            <button type="submit" class="btn-primary-custom btn-success">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>
+                Save Attendance
+            </button>
+        </div>
+    </form>
+</div>
+@section Scripts {
+<script>
+function resetOthers(clicked) {
+    var row = clicked.closest('tr');
+    row.querySelectorAll('label').forEach(function(l) {
+        if (l !== clicked) { l.style.background=''; l.style.borderColor='#e2e8f0'; l.style.color=''; }
+    });
+    clicked.querySelector('input').checked = true;
+}
+document.querySelectorAll('tr').forEach(function(row) {
+    var first = row.querySelector('label');
+    if (first) { first.style.background='#dcfce7'; first.style.borderColor='#10b981'; first.style.color='#15803d'; }
+});
+</script>
+}

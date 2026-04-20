@@ -1,0 +1,12 @@
+﻿@model StudentManagementSystem.Models.Course
+@{
+    ViewData["Title"] = "Add Course";
+}
+<div class="page-header"><div><div class="page-title">Add Course</div><div class="page-subtitle">Create a new course</div></div><a asp-controller="Course" asp-action="ViewCourses" class="btn-back">&larr; Back</a></div>
+<div class="form-card">
+    <form method="post">
+        <div class="form-group"><label class="form-label">Course Name</label>@Html.TextBoxFor(m => m.cname, new { @class = "form-control-custom", placeholder = "e.g. Database Systems" })<span class="form-error">@Html.ValidationMessageFor(m => m.cname)</span></div>
+        <div class="form-group"><label class="form-label">Credit Hours</label>@Html.TextBoxFor(m => m.creditHours, new { @class = "form-control-custom", placeholder = "e.g. 3" })<span class="form-error">@Html.ValidationMessageFor(m => m.creditHours)</span></div>
+        <div style="display:flex;gap:10px;margin-top:8px;"><button type="submit" class="btn-primary-custom">Add Course</button><a asp-controller="Course" asp-action="ViewCourses" class="btn-back">Cancel</a></div>
+    </form>
+</div>

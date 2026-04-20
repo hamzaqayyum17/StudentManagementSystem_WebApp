@@ -1,0 +1,28 @@
+@model List<StudentManagementSystem.Models.Fee>
+@{ ViewData["Title"] = "My Fees"; }
+<div class="page-header"><div><div class="page-title">My Fees</div><div class="page-subtitle">Your fee payment history</div></div></div>
+<div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+    <div class="stat-card" style="border-top:3px solid #64748b;"><div class="stat-card-label">Total Fee</div><div class="stat-card-value" style="color:#64748b;font-size:22px;">Rs. @ViewBag.TotalFee.ToString("N0")</div></div>
+    <div class="stat-card" style="border-top:3px solid #10b981;"><div class="stat-card-label">Paid</div><div class="stat-card-value green" style="font-size:22px;">Rs. @ViewBag.PaidFee.ToString("N0")</div></div>
+    <div class="stat-card" style="border-top:3px solid #ef4444;"><div class="stat-card-label">Pending</div><div class="stat-card-value red" style="font-size:22px;">Rs. @ViewBag.UnpaidFee.ToString("N0")</div></div>
+</div>
+<div class="table-wrapper">
+    <div class="table-toolbar"><div class="table-title">Fee History</div></div>
+    @if (Model.Count == 0) {
+        <div class="empty-state"><div class="empty-title">No fee records found</div></div>
+    } else {
+        <table class="data-table">
+            <thead><tr><th>Month</th><th>Amount</th><th>Status</th><th>Paid On</th></tr></thead>
+            <tbody>
+                @foreach (var f in Model) {
+                    <tr>
+                        <td style="font-weight:500;">@f.month</td>
+                        <td style="font-family:'DM Mono',monospace;font-weight:600;">Rs. @f.amount.ToString("N0")</td>
+                        <td>@if(f.status=="Paid"){<span class="badge-paid">✓ Paid</span>}else{<span class="badge-unpaid">✗ Unpaid</span>}</td>
+                        <td style="color:#64748b;font-size:13px;">@(f.paidDate.HasValue ? f.paidDate.Value.ToString("dd MMM yyyy") : "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

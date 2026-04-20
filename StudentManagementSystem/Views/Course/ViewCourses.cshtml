@@ -1,0 +1,25 @@
+﻿@model List<StudentManagementSystem.Models.Course>
+@{
+    ViewData["Title"] = "Courses";
+}
+<div class="page-header">
+    <div><div class="page-title">Courses</div><div class="page-subtitle">@Model.Count course(s) available</div></div>
+    <a asp-controller="Course" asp-action="AddCourse" class="btn-primary-custom"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>Add Course</a>
+</div>
+<div class="table-wrapper">
+    <div class="table-toolbar"><div><div class="table-title">All Courses</div><div class="table-count">@Model.Count records</div></div></div>
+    <table class="data-table">
+        <thead><tr><th>#</th><th>Course Name</th><th>Credit Hours</th><th>Actions</th></tr></thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td style="font-family:'DM Mono',monospace;font-size:12px;color:#94a3b8;">@c.cid</td>
+                    <td style="font-weight:500;">@c.cname</td>
+                    <td><span style="background:#eff6ff;color:#4f46e5;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">@c.creditHours hrs</span></td>
+                    <td><div style="display:flex;gap:6px;"><a asp-controller="Course" asp-action="EditCourse" asp-route-cid="@c.cid" class="btn-edit">Edit</a><a asp-controller="Course" asp-action="DeleteCourse" asp-route-cid="@c.cid" class="btn-delete" onclick="return confirm('Delete @c.cname?')">Delete</a></div></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

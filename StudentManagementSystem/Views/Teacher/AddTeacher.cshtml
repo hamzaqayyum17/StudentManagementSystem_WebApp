@@ -1,0 +1,15 @@
+@model StudentManagementSystem.Models.Teacher
+@{ ViewData["Title"] = "Add Teacher"; }
+<div class="page-header"><div><div class="page-title">Add Teacher</div><div class="page-subtitle">Register a new teacher</div></div><a asp-controller="Teacher" asp-action="AllTeachers" class="btn-back">&larr; Back</a></div>
+<div class="form-card">
+    <form method="post">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div class="form-group"><label class="form-label">Full Name</label><input type="text" name="name" class="form-control-custom" placeholder="Sir Ahmed" /></div>
+            <div class="form-group"><label class="form-label">City</label><input type="text" name="city" class="form-control-custom" placeholder="Lahore" /></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" name="email" class="form-control-custom" placeholder="ahmed@school.com" /><span style="font-size:11px;color:#94a3b8;margin-top:3px;display:block;">Teacher ID will be auto-generated from email</span></div>
+        <div class="form-group"><label class="form-label">Subject</label><input type="text" name="subject" class="form-control-custom" placeholder="e.g. Mathematics" /></div>
+        <div class="form-group"><label class="form-label">Password</label><input type="password" name="password" class="form-control-custom" placeholder="Set a password" /></div>
+        <div style="display:flex;gap:10px;margin-top:8px;"><button type="submit" class="btn-primary-custom btn-success">Add Teacher</button><a asp-controller="Teacher" asp-action="AllTeachers" class="btn-back">Cancel</a></div>
+    </form>
+</div>

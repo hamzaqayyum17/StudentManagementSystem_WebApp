@@ -1,0 +1,38 @@
+﻿@model StudentManagementSystem.Models.Enrollment
+@using System.Data
+@{
+    ViewData["Title"] = "Add Enrollment";
+}
+<div class="page-header"><div><div class="page-title">Add Enrollment</div><div class="page-subtitle">Enroll a student in a course</div></div><a asp-controller="Enrollment" asp-action="ViewEnrollment" class="btn-back">&larr; Back</a></div>
+<div class="form-card">
+    <form method="post">
+        <div class="form-group">
+            <label class="form-label">Student</label>
+            <select name="sid" class="form-control-custom">
+                @foreach (DataRow row in ViewBag.Students.Rows)
+                {
+                    <option value="@row["sid"]">@row["name"] (@row["sid"])</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Course</label>
+            <select name="cid" class="form-control-custom">
+                @foreach (DataRow row in ViewBag.Courses.Rows)
+                {
+                    <option value="@row["cid"]">@row["cname"]</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Grade</label>
+            <select name="grade" class="form-control-custom">
+                @foreach (var g in new[] { "A+", "A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D", "F" })
+                {
+                    <option value="@g">@g</option>
+                }
+            </select>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;"><button type="submit" class="btn-primary-custom">Add Enrollment</button><a asp-controller="Enrollment" asp-action="ViewEnrollment" class="btn-back">Cancel</a></div>
+    </form>
+</div>

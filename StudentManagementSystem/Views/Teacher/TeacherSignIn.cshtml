@@ -1,0 +1,42 @@
+@{ ViewData["Title"] = "Teacher Sign In"; Layout = "~/Views/Shared/_Layout.cshtml"; }
+<style>
+    body { background: #0f172a !important; }
+    .auth-page { min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#0f172a;margin-top:-62px; }
+    .auth-box { display:flex;width:100%;max-width:780px;border-radius:18px;overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,0.5); }
+    .auth-left { flex:1;background:linear-gradient(145deg,#064e3b,#065f46);padding:52px 44px;display:flex;flex-direction:column;justify-content:center; }
+    .auth-logo { width:44px;height:44px;background:#10b981;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700;color:#fff;margin-bottom:28px; }
+    .auth-left h1 { color:#fff;font-size:22px;font-weight:700;letter-spacing:-0.5px;margin-bottom:10px; }
+    .auth-left p  { color:#6ee7b7;font-size:13px;line-height:1.7; }
+    .auth-right { flex:1.2;background:#fff;padding:44px; }
+    .auth-right h2 { font-size:21px;font-weight:700;color:#0f172a;letter-spacing:-0.4px;margin-bottom:4px; }
+    .auth-right .sub { font-size:13px;color:#64748b;margin-bottom:28px; }
+    .field-group { margin-bottom:18px; }
+    .field-label { display:block;font-size:11.5px;font-weight:600;color:#374151;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px; }
+    .field-input { width:100%;padding:10px 13px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:13.5px;font-family:'DM Sans',sans-serif;color:#0f172a;background:#fafafa;transition:all 0.2s;outline:none; }
+    .field-input:focus { border-color:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,0.12);background:#fff; }
+    .btn-submit { width:100%;padding:12px;background:#10b981;color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s; }
+    .btn-submit:hover { background:#059669;transform:translateY(-1px); }
+    .err-box { background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:20px; }
+    .back-link { text-align:center;margin-top:16px;font-size:13px;color:#64748b; }
+    .back-link a { color:#10b981;font-weight:600;text-decoration:none; }
+</style>
+<div class="auth-page">
+    <div class="auth-box">
+        <div class="auth-left">
+            <div class="auth-logo">T</div>
+            <h1>Teacher Portal</h1>
+            <p>Sign in to mark attendance, view your classes and manage student records.</p>
+        </div>
+        <div class="auth-right">
+            <h2>Teacher Sign In</h2>
+            <p class="sub">Enter your Teacher ID and password</p>
+            @if (ViewBag.Error != null) { <div class="err-box">@ViewBag.Error</div> }
+            <form method="post">
+                <div class="field-group"><label class="field-label">Teacher ID</label><input type="text" name="tid" class="field-input" placeholder="e.g. t1" /></div>
+                <div class="field-group"><label class="field-label">Password</label><input type="password" name="password" class="field-input" placeholder="Enter your password" /></div>
+                <button type="submit" class="btn-submit">Sign In as Teacher</button>
+            </form>
+            <div class="back-link"><a asp-controller="Student" asp-action="SignIn">&larr; Student / Admin Login</a></div>
+        </div>
+    </div>
+</div>

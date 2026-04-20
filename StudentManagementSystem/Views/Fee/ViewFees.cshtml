@@ -1,0 +1,34 @@
+@model List<StudentManagementSystem.Models.Fee>
+@{ ViewData["Title"] = "Fee Management"; }
+<div class="page-header">
+    <div><div class="page-title">Fee Management</div><div class="page-subtitle">@Model.Count fee record(s)</div></div>
+    <a asp-controller="Fee" asp-action="AddFee" class="btn-primary-custom"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add Fee</a>
+</div>
+<div class="table-wrapper">
+    <div class="table-toolbar"><div><div class="table-title">All Fee Records</div><div class="table-count">@Model.Count records</div></div><a asp-controller="Fee" asp-action="UnpaidFees" class="btn-delete" style="text-decoration:none;padding:7px 14px;">View Unpaid</a></div>
+    @if (Model.Count == 0) {
+        <div class="empty-state"><div class="empty-icon"><svg width="22" height="22" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="empty-title">No fee records</div></div>
+    } else {
+        <table class="data-table">
+            <thead><tr><th>#</th><th>Student</th><th>Month</th><th>Amount</th><th>Status</th><th>Paid On</th><th>Actions</th></tr></thead>
+            <tbody>
+                @foreach (var f in Model) {
+                    <tr>
+                        <td style="font-size:12px;color:#94a3b8;">@f.fid</td>
+                        <td style="font-weight:500;">@f.studentName</td>
+                        <td style="color:#64748b;">@f.month</td>
+                        <td style="font-family:'DM Mono',monospace;font-weight:600;">Rs. @f.amount.ToString("N0")</td>
+                        <td>@if(f.status=="Paid"){<span class="badge-paid">✓ Paid</span>}else{<span class="badge-unpaid">✗ Unpaid</span>}</td>
+                        <td style="color:#64748b;font-size:13px;">@(f.paidDate.HasValue ? f.paidDate.Value.ToString("dd MMM yyyy") : "-")</td>
+                        <td>
+                            <div style="display:flex;gap:6px;">
+                                @if (f.status == "Unpaid") { <a asp-controller="Fee" asp-action="MarkPaid" asp-route-fid="@f.fid" class="btn-paid" onclick="return confirm('Mark as Paid?')">Mark Paid</a> }
+                                <a asp-controller="Fee" asp-action="DeleteFee" asp-route-fid="@f.fid" class="btn-delete" onclick="return confirm('Delete?')">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

@@ -1,0 +1,20 @@
+﻿@model StudentManagementSystem.Models.Student
+@{
+    ViewData["Title"] = "Edit Student";
+}
+<div class="page-header">
+    <div><div class="page-title">Edit Student</div><div class="page-subtitle">Update student information</div></div>
+    <a asp-controller="Student" asp-action="AllStudents" class="btn-back">&larr; Back</a>
+</div>
+<div class="form-card">
+    <form method="post">
+        @Html.HiddenFor(m => m.sid)
+        <div class="form-group"><label class="form-label">Full Name</label>@Html.TextBoxFor(m => m.name, new { @class = "form-control-custom" })<span class="form-error">@Html.ValidationMessageFor(m => m.name)</span></div>
+        <div class="form-group"><label class="form-label">City</label>@Html.TextBoxFor(m => m.city, new { @class = "form-control-custom" })<span class="form-error">@Html.ValidationMessageFor(m => m.city)</span></div>
+        <div class="form-group"><label class="form-label">Email</label>@Html.TextBoxFor(m => m.email, new { @class = "form-control-custom" })<span class="form-error">@Html.ValidationMessageFor(m => m.email)</span></div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+            <button type="submit" class="btn-primary-custom">Save Changes</button>
+            <a asp-controller="Student" asp-action="AllStudents" class="btn-back">Cancel</a>
+        </div>
+    </form>
+</div>

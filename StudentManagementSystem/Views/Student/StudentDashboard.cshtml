@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "My Dashboard";
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">My Dashboard</div>
+        <div class="page-subtitle">Welcome back, @ViewBag.Name</div>
+    </div>
+</div>
+
+<div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border-radius: 14px; padding: 28px 32px; margin-bottom: 24px; display:flex; justify-content:space-between; align-items:center;">
+    <div>
+        <div style="color:#94a3b8; font-size:13px; margin-bottom:6px;">Logged in as</div>
+        <div style="color:#fff; font-size:20px; font-weight:600; letter-spacing:-0.3px;">@ViewBag.Name</div>
+        <div style="margin-top:10px;">
+            <span style="background:#3b82f6; color:#fff; padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600;">Student</span>
+        </div>
+    </div>
+    <div style="width:56px; height:56px; background:rgba(59,130,246,0.2); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+        <svg width="26" height="26" fill="none" stroke="#93c5fd" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+
+    <a asp-controller="Student" asp-action="MyCourses" style="text-decoration:none;">
+        <div class="card" style="cursor:pointer; transition: all 0.2s; border: 1px solid #e2e8f0;" onmouseover="this.style.borderColor='#3b82f6'; this.style.boxShadow='0 4px 12px rgba(59,130,246,0.1)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <div style="width:44px; height:44px; background:#eff6ff; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <svg width="20" height="20" fill="none" stroke="#3b82f6" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>
+                </div>
+                <div>
+                    <div style="font-size:14px; font-weight:600; color:#0f172a;">My Courses</div>
+                    <div style="font-size:12px; color:#64748b; margin-top:2px;">View enrolled courses & grades</div>
+                </div>
+            </div>
+        </div>
+    </a>
+
+    <a asp-controller="Student" asp-action="MyProfile" style="text-decoration:none;">
+        <div class="card" style="cursor:pointer; transition: all 0.2s; border: 1px solid #e2e8f0;" onmouseover="this.style.borderColor='#16a34a'; this.style.boxShadow='0 4px 12px rgba(22,163,74,0.1)'" onmouseout="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+            <div style="display:flex; align-items:center; gap:14px;">
+                <div style="width:44px; height:44px; background:#f0fdf4; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                    <svg width="20" height="20" fill="none" stroke="#16a34a" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+                </div>
+                <div>
+                    <div style="font-size:14px; font-weight:600; color:#0f172a;">My Profile</div>
+                    <div style="font-size:12px; color:#64748b; margin-top:2px;">View your account details</div>
+                </div>
+            </div>
+        </div>
+    </a>
+
+</div>

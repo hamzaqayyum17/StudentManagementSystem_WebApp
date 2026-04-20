@@ -1,0 +1,36 @@
+@model List<StudentManagementSystem.Models.Attendance>
+@{ ViewData["Title"] = "My Attendance"; }
+<div class="page-header"><div><div class="page-title">My Attendance</div><div class="page-subtitle">Your attendance history</div></div></div>
+<div class="stat-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card" style="border-top:3px solid #64748b;"><div class="stat-card-label">Total Days</div><div class="stat-card-value" style="color:#64748b;">@ViewBag.Total</div></div>
+    <div class="stat-card" style="border-top:3px solid #10b981;"><div class="stat-card-label">Present</div><div class="stat-card-value green">@ViewBag.Present</div></div>
+    <div class="stat-card" style="border-top:3px solid #ef4444;"><div class="stat-card-label">Absent</div><div class="stat-card-value red">@ViewBag.Absent</div></div>
+    <div class="stat-card" style="border-top:3px solid #f59e0b;"><div class="stat-card-label">Late</div><div class="stat-card-value amber">@ViewBag.Late</div></div>
+</div>
+@if (ViewBag.Total > 0) {
+    var pct = (int)((ViewBag.Present / (double)ViewBag.Total) * 100);
+    var pctColor = pct >= 75 ? "#10b981" : pct >= 50 ? "#f59e0b" : "#ef4444";
+    <div class="card" style="margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:13px;font-weight:600;">Attendance Percentage</span><span style="font-size:14px;font-weight:700;color:@pctColor;">@pct%</span></div>
+        <div style="height:8px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:@pct%;background:@pctColor;border-radius:99px;transition:width 0.8s;"></div></div>
+    </div>
+}
+<div class="table-wrapper">
+    <div class="table-toolbar"><div class="table-title">Attendance History</div></div>
+    <table class="data-table">
+        <thead><tr><th>Date</th><th>Day</th><th>Status</th></tr></thead>
+        <tbody>
+            @foreach (var a in Model) {
+                <tr>
+                    <td style="font-family:'DM Mono',monospace;font-size:13px;">@a.date.ToString("dd MMM yyyy")</td>
+                    <td style="color:#64748b;">@a.date.ToString("dddd")</td>
+                    <td>
+                        @if (a.status=="Present")    { <span class="badge-present">✓ Present</span> }
+                        else if (a.status=="Absent") { <span class="badge-absent">✗ Absent</span> }
+                        else                         { <span class="badge-late">⏰ Late</span> }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

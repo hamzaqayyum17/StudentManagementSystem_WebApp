@@ -1,0 +1,304 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EduTrack SMS</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --brand:     #0a0f1e;
+            --brand2:    #111827;
+            --accent:    #6366f1;
+            --success:   #10b981;
+            --warning:   #f59e0b;
+            --danger:    #ef4444;
+            --bg:        #f8fafc;
+            --surface:   #ffffff;
+            --border:    #e2e8f0;
+            --text:      #0f172a;
+            --muted:     #64748b;
+            --sidebar-w: 240px;
+            --topbar-h:  62px;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+        /* LOADER */
+        .loader-wrapper { position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.3s; }
+        .loader-ring { width: 42px; height: 42px; border: 3px solid #e2e8f0; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @@keyframes spin { to { transform: rotate(360deg); } }
+
+        /* TOPBAR */
+        .topbar { position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h); background: var(--brand); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 200; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .topbar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .brand-icon { width: 34px; height: 34px; background: var(--accent); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #fff; }
+        .brand-text { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
+        .brand-sub { font-size: 10px; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; }
+        .topbar-right { display: flex; align-items: center; gap: 16px; }
+        .user-chip { display: flex; align-items: center; gap: 9px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; padding: 5px 14px 5px 6px; }
+        .user-avatar { width: 28px; height: 28px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+        .user-name { font-size: 13px; color: #e2e8f0; font-weight: 500; }
+        .role-pill { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .role-admin   { background: rgba(99,102,241,0.2); color: #a5b4fc; }
+        .role-teacher { background: rgba(16,185,129,0.2); color: #6ee7b7; }
+        .role-student { background: rgba(245,158,11,0.2); color: #fcd34d; }
+        .btn-logout { font-size: 12px; color: #f87171; text-decoration: none; font-weight: 500; padding: 5px 12px; border: 1px solid rgba(239,68,68,0.25); border-radius: 6px; transition: all 0.2s; }
+        .btn-logout:hover { background: rgba(239,68,68,0.1); color: #fca5a5; }
+
+        /* SIDEBAR */
+        .sidebar { position: fixed; top: var(--topbar-h); left: 0; width: var(--sidebar-w); height: calc(100vh - var(--topbar-h)); background: var(--brand2); padding: 20px 12px; overflow-y: auto; border-right: 1px solid rgba(255,255,255,0.04); }
+        .sidebar-section { margin-bottom: 22px; }
+        .sidebar-label { font-size: 10px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: #475569; padding: 0 8px; margin-bottom: 6px; }
+        .nav-link { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 8px; color: #94a3b8; text-decoration: none; font-size: 13.5px; font-weight: 500; transition: all 0.15s; margin-bottom: 2px; }
+        .nav-link:hover { background: rgba(255,255,255,0.06); color: #e2e8f0; }
+        .nav-link.active { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+
+        /* MAIN */
+        .main-content { margin-top: var(--topbar-h); margin-left: var(--sidebar-w); padding: 28px 30px; min-height: calc(100vh - var(--topbar-h)); }
+        .main-content.no-sidebar { margin-left: 0; }
+
+        /* PAGE HEADER */
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-title { font-size: 21px; font-weight: 700; letter-spacing: -0.5px; }
+        .page-subtitle { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+        /* CARDS */
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; max-width: 560px; }
+
+        /* STAT */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .stat-card-label { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+        .stat-card-value { font-size: 30px; font-weight: 700; letter-spacing: -1px; font-family: 'DM Mono', monospace; }
+        .blue   { color: #6366f1; } .green  { color: #10b981; } .amber  { color: #f59e0b; } .red    { color: #ef4444; } .purple { color: #8b5cf6; }
+
+        /* TABLE */
+        .table-wrapper { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        .table-toolbar { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .table-title { font-size: 14px; font-weight: 600; }
+        .table-count { font-size: 12px; color: var(--muted); }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+        .data-table thead th { text-align: left; padding: 10px 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--muted); background: #f8fafc; border-bottom: 1px solid var(--border); }
+        .data-table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.1s; }
+        .data-table tbody tr:hover { background: #fafbfd; }
+        .data-table tbody td { padding: 12px 16px; }
+        .data-table tbody tr:last-child { border-bottom: none; }
+
+        /* FORM */
+        .form-group { margin-bottom: 18px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; color: #374151; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control-custom { width: 100%; padding: 10px 13px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13.5px; font-family: 'DM Sans', sans-serif; color: var(--text); background: #fafafa; transition: all 0.2s; outline: none; }
+        .form-control-custom:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(99,102,241,0.12); background: #fff; }
+        .form-error { font-size: 11.5px; color: var(--danger); margin-top: 4px; display: block; }
+
+        /* BUTTONS */
+        .btn-primary-custom { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; text-decoration: none; transition: all 0.2s; }
+        .btn-primary-custom:hover { background: #4f46e5; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
+        .btn-success { background: var(--success) !important; }
+        .btn-success:hover { background: #059669 !important; box-shadow: 0 4px 12px rgba(16,185,129,0.3) !important; }
+        .btn-back { display: inline-flex; align-items: center; gap: 5px; padding: 8px 16px; background: transparent; color: var(--muted); border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+        .btn-back:hover { border-color: #94a3b8; color: var(--text); background: #f8fafc; }
+        .btn-edit { display: inline-flex; align-items: center; padding: 5px 12px; background: #eff6ff; color: #1d4ed8; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.15s; }
+        .btn-edit:hover { background: #dbeafe; }
+        .btn-delete { display: inline-flex; align-items: center; padding: 5px 12px; background: #fef2f2; color: #dc2626; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.15s; }
+        .btn-delete:hover { background: #fee2e2; }
+        .btn-paid { display: inline-flex; align-items: center; padding: 5px 12px; background: #f0fdf4; color: #15803d; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; transition: all 0.15s; }
+        .btn-paid:hover { background: #dcfce7; }
+
+        /* BADGES */
+        .badge-present { background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+        .badge-absent  { background: #fef2f2; color: #dc2626; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+        .badge-late    { background: #fef3c7; color: #d97706; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+        .badge-paid    { background: #dcfce7; color: #15803d; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+        .badge-unpaid  { background: #fef2f2; color: #dc2626; padding: 3px 10px; border-radius: 20px; font-size: 11.5px; font-weight: 600; }
+
+        /* ALERTS */
+        .alert-success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+        .alert-error   { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 52px 24px; }
+        .empty-icon { width: 52px; height: 52px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+        .empty-title { font-size: 15px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+        .empty-sub   { font-size: 13px; color: #94a3b8; }
+
+        /* SEARCH */
+        .search-form { display: flex; gap: 8px; }
+        .search-input { padding: 8px 13px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none; width: 200px; }
+        .search-input:focus { border-color: var(--accent); }
+    </style>
+</head>
+<body>
+    <div id="loader" class="loader-wrapper"><div class="loader-ring"></div></div>
+
+    @{
+        var sid  = Context.Session?.GetString("sid");
+        var name = Context.Session?.GetString("name");
+        var role = Context.Session?.GetString("role");
+        var initial = name?.Length > 0 ? name.Substring(0, 1).ToUpper() : "?";
+    }
+
+    <div class="topbar">
+        <a class="topbar-brand" asp-controller="Home" asp-action="Index">
+            <div class="brand-icon">E</div>
+            <div><div class="brand-text">EduTrack</div><div class="brand-sub">Student MS</div></div>
+        </a>
+        <div class="topbar-right">
+            @if (name != null)
+            {
+                <div class="user-chip">
+                    <div class="user-avatar">@initial</div>
+                    <span class="user-name">@name</span>
+                    @if (role == "admin")         { <span class="role-pill role-admin">Admin</span> }
+                    else if (role == "teacher")   { <span class="role-pill role-teacher">Teacher</span> }
+                    else                          { <span class="role-pill role-student">Student</span> }
+                </div>
+                <a asp-controller="Student" asp-action="Logout" class="btn-logout">Sign Out</a>
+            }
+        </div>
+    </div>
+
+    @if (sid != null)
+    {
+        <div class="sidebar">
+            @if (role == "admin")
+            {
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Overview</div>
+                    <a asp-controller="Student" asp-action="AdminDashboard" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">People</div>
+                    <a asp-controller="Student" asp-action="AllStudents" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                        Students
+                    </a>
+                    <a asp-controller="Teacher" asp-action="AllTeachers" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                        Teachers
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Academics</div>
+                    <a asp-controller="Course" asp-action="ViewCourses" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        Courses
+                    </a>
+                    <a asp-controller="Enrollment" asp-action="ViewEnrollment" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        Enrollments
+                    </a>
+                    <a asp-controller="Attendance" asp-action="ViewAttendance" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        Attendance
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Finance</div>
+                    <a asp-controller="Fee" asp-action="ViewFees" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        Fee Management
+                    </a>
+                    <a asp-controller="Fee" asp-action="UnpaidFees" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        Unpaid Fees
+                    </a>
+                </div>
+            }
+            else if (role == "teacher")
+            {
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Overview</div>
+                    <a asp-controller="Teacher" asp-action="TeacherDashboard" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Attendance</div>
+                    <a asp-controller="Attendance" asp-action="MarkAttendance" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>
+                        Mark Attendance
+                    </a>
+                    <a asp-controller="Attendance" asp-action="ViewAttendance" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        View Attendance
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Overview</div>
+                    <a asp-controller="Student" asp-action="StudentDashboard" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Academics</div>
+                    <a asp-controller="Student" asp-action="MyCourses" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        My Courses
+                    </a>
+                    <a asp-controller="Attendance" asp-action="MyAttendance" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        My Attendance
+                    </a>
+                    <a asp-controller="Fee" asp-action="MyFees" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        My Fees
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Account</div>
+                    <a asp-controller="Student" asp-action="MyProfile" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        My Profile
+                    </a>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="main-content @(sid == null ? "no-sidebar" : "")">
+        @if (TempData["msg"] != null)
+        {
+            <div class="alert-success">✓ &nbsp;@TempData["msg"]</div>
+        }
+        @RenderBody()
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        window.addEventListener("load", function () {
+            var l = document.getElementById("loader");
+            l.style.opacity = "0";
+            setTimeout(() => l.style.display = "none", 300);
+        });
+        document.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", function () {
+                var href = this.getAttribute("href");
+                if (href && !href.startsWith("#") && !this.hasAttribute("target")) {
+                    document.getElementById("loader").style.display = "flex";
+                    document.getElementById("loader").style.opacity = "1";
+                }
+            });
+        });
+        var path = window.location.pathname.toLowerCase();
+        document.querySelectorAll(".nav-link").forEach(link => {
+            if (link.href && path === new URL(link.href).pathname.toLowerCase()) {
+                link.classList.add("active");
+            }
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
