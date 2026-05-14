@@ -1,0 +1,25 @@
+﻿@model StudentManagementSystem.Models.Class
+@{
+    ViewData["Title"] = "Edit Class";
+}
+<div class="page-header">
+    <div>
+        <div class="page-title">Edit Class</div>
+        <div class="page-subtitle">Update class name</div>
+    </div>
+    <a asp-controller="Class" asp-action="ViewClasses" class="btn-back">&larr; Back</a>
+</div>
+
+<div class="form-card">
+    <form method="post">
+        @Html.HiddenFor(m => m.classId)
+        <div class="form-group">
+            <label class="form-label">Class Name</label>
+            @Html.TextBoxFor(m => m.className, new { @class = "form-control-custom" })
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+            <button type="submit" class="btn-primary-custom">Save Changes</button>
+            <a asp-controller="Class" asp-action="ViewClasses" class="btn-back">Cancel</a>
+        </div>
+    </form>
+</div>

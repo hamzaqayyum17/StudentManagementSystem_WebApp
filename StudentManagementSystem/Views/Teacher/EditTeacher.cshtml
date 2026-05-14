@@ -1,13 +1,15 @@
 @model StudentManagementSystem.Models.Teacher
-@{ ViewData["Title"] = "Edit Teacher"; }
+@{
+    ViewData["Title"] = "Edit Teacher";
+}
 <div class="page-header"><div><div class="page-title">Edit Teacher</div><div class="page-subtitle">Update teacher information</div></div><a asp-controller="Teacher" asp-action="AllTeachers" class="btn-back">&larr; Back</a></div>
 <div class="form-card">
     <form method="post">
         @Html.HiddenFor(m => m.tid)
-        <div class="form-group"><label class="form-label">Full Name</label>@Html.TextBoxFor(m => m.name, new { @class="form-control-custom" })</div>
-        <div class="form-group"><label class="form-label">City</label>@Html.TextBoxFor(m => m.city, new { @class="form-control-custom" })</div>
-        <div class="form-group"><label class="form-label">Email</label>@Html.TextBoxFor(m => m.email, new { @class="form-control-custom" })</div>
-        <div class="form-group"><label class="form-label">Subject</label>@Html.TextBoxFor(m => m.subject, new { @class="form-control-custom" })</div>
+        <div class="form-group"><label class="form-label">Full Name</label>@Html.TextBoxFor(m => m.name, new { @class = "form-control-custom" })</div>
+        <div class="form-group"><label class="form-label">City</label>@Html.TextBoxFor(m => m.city, new { @class = "form-control-custom" })</div>
+        <div class="form-group"><label class="form-label">Email</label>@Html.TextBoxFor(m => m.email, new { @class = "form-control-custom" })</div>
+        <div class="form-group"><label class="form-label">Subject</label>@Html.TextBoxFor(m => m.subject, new { @class = "form-control-custom" })</div>
         <div style="display:flex;gap:10px;margin-top:8px;"><button type="submit" class="btn-primary-custom">Save Changes</button><a asp-controller="Teacher" asp-action="AllTeachers" class="btn-back">Cancel</a></div>
     </form>
 </div>

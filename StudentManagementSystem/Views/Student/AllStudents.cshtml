@@ -12,9 +12,13 @@
         Add Student
     </a>
 </div>
+
 <div class="table-wrapper">
     <div class="table-toolbar">
-        <div><div class="table-title">All Students</div><div class="table-count">@Model.Count records</div></div>
+        <div>
+            <div class="table-title">All Students</div>
+            <div class="table-count">@Model.Count records</div>
+        </div>
         <form method="get" class="search-form">
             <input type="text" name="search" value="@ViewBag.Search" class="search-input" placeholder="Search by name..." />
             <button type="submit" class="btn-primary-custom" style="padding:8px 16px;">Search</button>
@@ -24,18 +28,29 @@
             }
         </form>
     </div>
+
     @if (Model.Count == 0)
     {
         <div class="empty-state">
-            <div class="empty-icon"><svg width="22" height="22" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg></div>
+            <div class="empty-icon">
+                <svg width="22" height="22" fill="none" stroke="#94a3b8" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg>
+            </div>
             <div class="empty-title">No students found</div>
-            <div class="empty-sub">Try a different search or add a new student.</div>
+            <div class="empty-sub">Add a new student or try a different search.</div>
         </div>
     }
     else
     {
         <table class="data-table">
-            <thead><tr><th>ID</th><th>Name</th><th>City</th><th>Actions</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
             <tbody>
                 @foreach (var s in Model)
                 {
@@ -43,16 +58,20 @@
                         <td><span style="font-family:'DM Mono',monospace;font-size:12px;color:#94a3b8;">@s.sid</span></td>
                         <td>
                             <div style="display:flex;align-items:center;gap:10px;">
-                                <div style="width:32px;height:32px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4f46e5;">@s.name.Substring(0, 1).ToUpper()</div>
+                                <div style="width:32px;height:32px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4f46e5;">
+                                    @s.name.Substring(0, 1).ToUpper()
+                                </div>
                                 <span style="font-weight:500;">@s.name</span>
                             </div>
                         </td>
                         <td style="color:#64748b;">@s.city</td>
+                        <td style="color:#64748b;font-size:13px;">@s.email</td>
                         <td>
                             <div style="display:flex;gap:6px;">
                                 <a asp-controller="Student" asp-action="Detail" asp-route-sid="@s.sid" class="btn-edit">View</a>
                                 <a asp-controller="Student" asp-action="Edit" asp-route-sid="@s.sid" class="btn-edit" style="background:#f0fdf4;color:#15803d;">Edit</a>
-                                <a asp-controller="Student" asp-action="Delete" asp-route-sid="@s.sid" class="btn-delete" onclick="return confirm('Delete @s.name?')">Delete</a>
+                                <a asp-controller="Student" asp-action="Delete" asp-route-sid="@s.sid" class="btn-delete"
+                                   onclick="return confirm('Delete @s.name? This cannot be undone.')">Delete</a>
                             </div>
                         </td>
                     </tr>

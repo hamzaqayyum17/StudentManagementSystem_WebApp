@@ -1,0 +1,28 @@
+﻿@model StudentManagementSystem.Models.Class
+@{
+    ViewData["Title"] = "Add Class";
+}
+<div class="page-header">
+    <div>
+        <div class="page-title">Add Class</div>
+        <div class="page-subtitle">Create a new class</div>
+    </div>
+    <a asp-controller="Class" asp-action="ViewClasses" class="btn-back">&larr; Back</a>
+</div>
+
+<div class="form-card">
+    <form method="post">
+        <div class="form-group">
+            <label class="form-label">Class Name</label>
+            <input type="text" name="className" class="form-control-custom"
+                   placeholder="e.g. Class 9" />
+            <span style="font-size:11px;color:#94a3b8;margin-top:4px;display:block;">
+                Example: Class 9, Class 10, Class 11
+            </span>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:8px;">
+            <button type="submit" class="btn-primary-custom">Add Class</button>
+            <a asp-controller="Class" asp-action="ViewClasses" class="btn-back">Cancel</a>
+        </div>
+    </form>
+</div>

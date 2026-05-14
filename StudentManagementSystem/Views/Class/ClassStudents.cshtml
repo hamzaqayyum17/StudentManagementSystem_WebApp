@@ -1,0 +1,93 @@
+﻿@model List<StudentManagementSystem.Models.Student>
+@using System.Data
+@{
+    ViewData["Title"] = "Class Students";
+}
+<div class="page-header">
+    <div>
+        <div class="page-title">@ViewBag.ClassName — Students</div>
+        <div class="page-subtitle">@Model.Count student(s) in this class</div>
+    </div>
+    <a asp-controller="Class" asp-action="ViewClasses" class="btn-back">&larr; Back</a>
+</div>
+
+{{!-- Section Filter --}}
+<div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
+    <a asp-controller="Class" asp-action="ClassStudents"
+           asp-route-classId="@ViewBag.ClassId"
+           class="btn-back @(ViewBag.SelectedSection == null ? "btn-primary-custom" : "")">
+        All Sections
+    </a>
+    @foreach (DataRow row in ViewBag.Sections.Rows)
+    {
+        var secId = int.Parse(row["sectionId"].ToString());
+        var isActive = ViewBag.SelectedSection != null && (int)ViewBag.SelectedSection == secId;
+        <a asp-controller="Class" asp-action="ClassStudents"
+               asp-route-classId="@ViewBag.ClassId"
+               asp-route-sectionId="@secId"
+               class="@(isActive ? "btn-primary-custom" : "btn-back")">
+            Section @row["sectionName"]
+        </a>
+    }
+</div>
+
+<div class="table-wrapper">
+    <div class="table-toolbar">
+        <div>
+            <div class="table-title">Students List</div>
+            <div class="table-count">@Model.Count students</div>
+        </div>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <div class="empty-state">
+            <div class="empty-title">No students in this class</div>
+            <div class="empty-sub">Assign students from Student Management.</div>
+        </div>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Roll No</th>
+                    <th>Name</th>
+                    <th>Section</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in Model)
+                {
+                    <tr>
+                        <td>
+                            <span style="font-family:'DM Mono',monospace;font-size:12px;background:#f1f5f9;padding:3px 8px;border-radius:6px;color:#4f46e5;font-weight:600;">
+                                @s.rollNumber
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div style="width:32px;height:32px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4f46e5;">
+                                    @s.name.Substring(0, 1).ToUpper()
+                                </div>
+                                <span style="font-weight:500;">@s.name</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="background:#f0fdf4;color:#059669;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">
+                                @s.sectionName
+                            </span>
+                        </td>
+                        <td style="color:#64748b;font-size:13px;">@s.email</td>
+                        <td>
+                            <a asp-controller="Student" asp-action="Detail"
+                               asp-route-sid="@s.sid" class="btn-edit">View Profile</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

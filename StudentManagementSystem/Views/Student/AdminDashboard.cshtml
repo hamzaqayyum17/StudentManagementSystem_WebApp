@@ -11,35 +11,35 @@
 
 <div class="stat-grid">
     <a asp-controller="Student" asp-action="AllStudents" style="text-decoration:none;">
-        <div class="stat-card" style="border-top:3px solid #6366f1; transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(99,102,241,0.12)'" onmouseout="this.style.boxShadow='none'">
+        <div class="stat-card" style="border-top:3px solid #6366f1;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(99,102,241,0.15)'" onmouseout="this.style.boxShadow='none'">
             <div class="stat-card-label">Total Students</div>
             <div class="stat-card-value blue">@ViewBag.TotalStudents</div>
-            <div style="font-size:11px;color:#94a3b8;margin-top:8px;">Manage &rarr;</div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:8px;">Click to manage &rarr;</div>
         </div>
     </a>
     <a asp-controller="Teacher" asp-action="AllTeachers" style="text-decoration:none;">
-        <div class="stat-card" style="border-top:3px solid #10b981; transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(16,185,129,0.12)'" onmouseout="this.style.boxShadow='none'">
+        <div class="stat-card" style="border-top:3px solid #10b981;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(16,185,129,0.15)'" onmouseout="this.style.boxShadow='none'">
             <div class="stat-card-label">Total Teachers</div>
             <div class="stat-card-value green">@ViewBag.TotalTeachers</div>
-            <div style="font-size:11px;color:#94a3b8;margin-top:8px;">Manage &rarr;</div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:8px;">Click to manage &rarr;</div>
         </div>
     </a>
     <a asp-controller="Course" asp-action="ViewCourses" style="text-decoration:none;">
-        <div class="stat-card" style="border-top:3px solid #f59e0b; transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(245,158,11,0.12)'" onmouseout="this.style.boxShadow='none'">
+        <div class="stat-card" style="border-top:3px solid #f59e0b;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(245,158,11,0.15)'" onmouseout="this.style.boxShadow='none'">
             <div class="stat-card-label">Total Courses</div>
             <div class="stat-card-value amber">@ViewBag.TotalCourses</div>
-            <div style="font-size:11px;color:#94a3b8;margin-top:8px;">Manage &rarr;</div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:8px;">Click to manage &rarr;</div>
         </div>
     </a>
     <a asp-controller="Enrollment" asp-action="ViewEnrollment" style="text-decoration:none;">
-        <div class="stat-card" style="border-top:3px solid #8b5cf6; transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(139,92,246,0.12)'" onmouseout="this.style.boxShadow='none'">
+        <div class="stat-card" style="border-top:3px solid #8b5cf6;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(139,92,246,0.15)'" onmouseout="this.style.boxShadow='none'">
             <div class="stat-card-label">Enrollments</div>
             <div class="stat-card-value purple">@ViewBag.TotalEnrollments</div>
-            <div style="font-size:11px;color:#94a3b8;margin-top:8px;">Manage &rarr;</div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:8px;">Click to manage &rarr;</div>
         </div>
     </a>
     <a asp-controller="Fee" asp-action="UnpaidFees" style="text-decoration:none;">
-        <div class="stat-card" style="border-top:3px solid #ef4444; transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(239,68,68,0.12)'" onmouseout="this.style.boxShadow='none'">
+        <div class="stat-card" style="border-top:3px solid #ef4444;transition:box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 6px 20px rgba(239,68,68,0.15)'" onmouseout="this.style.boxShadow='none'">
             <div class="stat-card-label">Unpaid Fees</div>
             <div class="stat-card-value red">@ViewBag.UnpaidFees</div>
             <div style="font-size:11px;color:#94a3b8;margin-top:8px;">View list &rarr;</div>
@@ -47,13 +47,13 @@
     </a>
 </div>
 
-<div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
     <div class="card">
         <div style="font-size:14px;font-weight:600;margin-bottom:16px;color:#0f172a;">⚡ Quick Actions</div>
         <div style="display:flex;flex-direction:column;gap:8px;">
-            <a asp-controller="Student" asp-action="AllStudents" class="btn-primary-custom" style="justify-content:flex-start;">
-                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /></svg>
-                Manage Students
+            <a asp-controller="Student" asp-action="SignUp" class="btn-primary-custom" style="justify-content:flex-start;">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                Add New Student
             </a>
             <a asp-controller="Teacher" asp-action="AddTeacher" class="btn-primary-custom btn-success" style="justify-content:flex-start;">
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
@@ -67,23 +67,32 @@
                 <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
                 Add Fee Record
             </a>
+            <a asp-controller="Enrollment" asp-action="AddEnrollment" class="btn-primary-custom" style="justify-content:flex-start;background:#8b5cf6;">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4" /></svg>
+                Add Enrollment
+            </a>
         </div>
     </div>
+
     <div class="card">
         <div style="font-size:14px;font-weight:600;margin-bottom:16px;color:#0f172a;">ℹ️ System Info</div>
         <div style="display:flex;flex-direction:column;gap:0;">
-            @foreach (var (label, value, color) in new[] {
-                ("Role", "Administrator", "#6366f1"),
-                ("Logged in as", ViewBag.Name?.ToString() ?? "-", "#0f172a"),
-                ("Access level", "Full Access", "#10b981"),
-                ("Database", "SQL Server", "#64748b"),
-            })
-            {
-                <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f1f5f9;">
-                    <span style="font-size:13px;color:#64748b;">@label</span>
-                    <span style="font-size:13px;font-weight:600;color:@color;">@value</span>
-                </div>
-            }
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f1f5f9;">
+                <span style="font-size:13px;color:#64748b;">Role</span>
+                <span style="font-size:13px;font-weight:600;background:#1e293b;color:#fff;padding:3px 10px;border-radius:20px;">Administrator</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f1f5f9;">
+                <span style="font-size:13px;color:#64748b;">Logged in as</span>
+                <span style="font-size:13px;font-weight:600;color:#0f172a;">@ViewBag.Name</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #f1f5f9;">
+                <span style="font-size:13px;color:#64748b;">Access Level</span>
+                <span style="font-size:13px;font-weight:600;color:#10b981;">Full Access</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;">
+                <span style="font-size:13px;color:#64748b;">Database</span>
+                <span style="font-size:13px;font-weight:600;color:#64748b;">SQL Server</span>
+            </div>
         </div>
     </div>
 </div>
