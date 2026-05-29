@@ -61,19 +61,23 @@ cd StudentManagementSystem_WebApp
 ### 3. Update appsettings.json
 ```json
 {
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=YOUR_SERVER;Initial Catalog=StudentDB;Integrated Security=True;TrustServerCertificate=True;"
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
   },
+  "AllowedHosts": "*",
   "GoogleSheets": {
-    "SpreadsheetId": "YOUR_GOOGLE_SHEET_ID",
-    "CredentialsPath": "Credentials/your-credentials.json",
+    "SpreadsheetId": "1D0n-YaOS-JPHUaOKBQqNgIvABU2p4gKaZwbFa_I2CFk",
+    "CredentialsPath": "Credentials/studentms-496507-6bfa18f8bdbb.json",
     "SheetName": "Sheet1"
   },
   "EmailSettings": {
     "Host": "smtp.gmail.com",
     "Port": 587,
-    "Email": "your-email@gmail.com",
-    "Password": "your-app-password",
+    "Email": "kalilinux9t9@gmail.com",
+    "Password": "vfxz llcf rxjz rumn",
     "DisplayName": "EduTrack SMS"
   }
 }
