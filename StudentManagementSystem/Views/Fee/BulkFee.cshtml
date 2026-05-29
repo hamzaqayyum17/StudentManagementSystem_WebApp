@@ -1,0 +1,85 @@
+﻿@using System.Data
+@{
+    ViewData["Title"] = "Bulk Fee Generate";
+}
+<div class="page-header">
+    <div>
+        <div class="page-title">Bulk Fee Generate</div>
+        <div class="page-subtitle">Generate fee for all or specific class students</div>
+    </div>
+    <a asp-controller="Fee" asp-action="ViewFees" class="btn-back">&larr; Back</a>
+</div>
+
+<div class="form-card">
+    <form method="post">
+
+        <div class="form-group">
+            <label class="form-label">Month</label>
+            <select name="month" class="form-control-custom">
+                @foreach (var m in new[]{
+                    "January 2025","February 2025","March 2025",
+                    "April 2025","May 2025","June 2025",
+                    "July 2025","August 2025","September 2025",
+                    "October 2025","November 2025","December 2025",
+                    "January 2026","February 2026","March 2026",
+                    "April 2026","May 2026","June 2026",
+                    "July 2026","August 2026","September 2026",
+                    "October 2026","November 2026","December 2026"
+                })
+                {
+                    @if (m == "May 2026")
+                    {
+                        <option value="@m" selected>@m</option>
+                    }
+                    else
+                    {
+                        <option value="@m">@m</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Fee Amount (Rs.)</label>
+            <input type="number" name="amount" class="form-control-custom"
+                   placeholder="e.g. 5000" value="5000" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Class (Optional)</label>
+            <select name="classId" class="form-control-custom">
+                <option value="">-- All Students --</option>
+                @foreach (DataRow row in ViewBag.Classes.Rows) {
+                    <option value="@row["classId"]">@row["className"]</option>
+                }
+            </select>
+            <span style="font-size:11px;color:#94a3b8;margin-top:3px;display:block;">
+                Leave "All Students" to generate fee for everyone
+            </span>
+        </div>
+
+        <div style="background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;
+                    padding:14px;margin-bottom:18px;">
+            <div style="font-size:13px;color:#92400e;font-weight:600;">
+                ⚠️ Note: Duplicate fees will be skipped automatically
+            </div>
+            <div style="font-size:12px;color:#b45309;margin-top:4px;">
+                If a student already has fee for selected month — it will not be duplicated.
+            </div>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+            <button type="submit" class="btn-primary-custom btn-success"
+                    onclick="return confirm('Generate bulk fee?')">
+                <svg width="15" height="15" fill="none" stroke="currentColor"
+                     stroke-width="2" viewBox="0 0 24 24">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+                Generate Fee
+            </button>
+            <a asp-controller="Fee" asp-action="ViewFees" class="btn-back">Cancel</a>
+        </div>
+
+    </form>
+</div>

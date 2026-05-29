@@ -1,6 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
-
+builder.Services.AddScoped<StudentManagementSystem.Services.GoogleSheetsService>();
+builder.Services.AddScoped<StudentManagementSystem.Services.EmailService>();
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSession();

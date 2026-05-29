@@ -1,0 +1,157 @@
+﻿@using System.Data
+@{
+    ViewData["Title"] = "Student Progress Report";
+    int attPct = ViewBag.AttPct;
+    string attColor = attPct >= 75 ? "#10b981" : attPct >= 50 ? "#f59e0b" : "#ef4444";
+}
+
+<div class="page-header">
+    <div>
+        <div class="page-title">Student Progress Report</div>
+        <div class="page-subtitle">Complete overview — Attendance, Grades & Fees</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+        <a asp-controller="Report" asp-action="ResultCard"
+               asp-route-sid="@ViewBag.Sid"
+               class="btn-primary-custom" style="background:#ef4444;" target="_blank">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+            Download Result Card
+        </a>
+        <a asp-controller="Student" asp-action="AllStudents" class="btn-back">&larr; Back</a>
+    </div>
+</div>
+
+@* STUDENT INFO BANNER *@
+<div style="background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%);
+    border-radius:14px;padding:24px 28px;margin-bottom:24px;
+    display:flex;justify-content:space-between;align-items:center;">
+    <div style="display:flex;align-items:center;gap:16px;">
+        <div style="width:56px;height:56px;background:rgba(99,102,241,0.2);
+            border-radius:50%;display:flex;align-items:center;
+            justify-content:center;font-size:22px;font-weight:700;color:#a5b4fc;">
+            @ViewBag.StudentName.ToString().Substring(0, 1).ToUpper()
+        </div>
+        <div>
+            <div style="color:#fff;font-size:20px;font-weight:700;">@ViewBag.StudentName</div>
+            <div style="color:#64748b;font-size:13px;margin-top:2px;">@ViewBag.Email</div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+                <span style="background:rgba(99,102,241,0.15);color:#a5b4fc;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">
+                    @ViewBag.ClassName
+                </span>
+                <span style="background:rgba(16,185,129,0.15);color:#6ee7b7;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">
+                    Section @ViewBag.SectionName
+                </span>
+                <span style="background:rgba(245,158,11,0.15);color:#fcd34d;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;">
+                    Roll: @ViewBag.RollNumber
+                </span>
+            </div>
+        </div>
+    </div>
+    <div style="text-align:right;">
+        <div style="color:#64748b;font-size:11px;margin-bottom:4px;">Generated On</div>
+        <div style="color:#fff;font-size:13px;font-weight:600;">@DateTime.Now.ToString("dd MMM yyyy")</div>
+    </div>
+</div>
+
+@* STATS ROW *@
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+    <div class="stat-card" style="border-top:3px solid #6366f1;">
+        <div class="stat-card-label">Attendance %</div>
+        <div class="stat-card-value" style="color:@attColor;">@attPct%</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:6px;">@ViewBag.AttPresent present / @ViewBag.AttTotal total</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #10b981;">
+        <div class="stat-card-label">Courses Enrolled</div>
+        <div class="stat-card-value green">@(((DataTable)ViewBag.Enrollments).Rows.Count)</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:6px;">Active courses</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #f59e0b;">
+        <div class="stat-card-label">Fee Paid</div>
+        <div class="stat-card-value amber" style="font-size:20px;">Rs. @ViewBag.FeePaidAmount.ToString("N0")</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:6px;">@ViewBag.FeePaid months paid</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #ef4444;">
+        <div class="stat-card-label">Fee Pending</div>
+        <div class="stat-card-value red" style="font-size:20px;">Rs. @ViewBag.FeeUnpaidAmount.ToString("N0")</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:6px;">@ViewBag.FeeUnpaid months unpaid</div>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+    @* ATTENDANCE CARD *@
+    <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:16px;color:#0f172a;">
+            📅 Attendance Summary
+        </div>
+
+        @* Progress Bar *@
+        <div style="margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                <span style="font-size:12px;color:#64748b;">Attendance Rate</span>
+                <span style="font-size:13px;font-weight:700;color:@attColor;">@attPct%</span>
+            </div>
+            <div style="height:10px;background:#f1f5f9;border-radius:99px;overflow:hidden;">
+                <div style="height:100%;width:@attPct%;background:@attColor;border-radius:99px;transition:width 1s;"></div>
+            </div>
+            @if (attPct < 75)
+            {
+                <div style="font-size:11px;color:#ef4444;margin-top:4px;">⚠️ Below 75% — Attendance low hai!</div>
+            }
+            else
+            {
+                <div style="font-size:11px;color:#10b981;margin-top:4px;">✓ Good attendance</div>
+            }
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:0;">
+            @foreach (var (label, value, color) in new[] {
+                ("Total Days",  ViewBag.AttTotal.ToString(),   "#64748b"),
+                ("Present",     ViewBag.AttPresent.ToString(), "#10b981"),
+                ("Absent",      ViewBag.AttAbsent.ToString(),  "#ef4444"),
+                ("Late",        ViewBag.AttLate.ToString(),    "#f59e0b"),
+            })
+            {
+                <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f8fafc;">
+                    <span style="font-size:13px;color:#64748b;">@label</span>
+                    <span style="font-size:13px;font-weight:700;color:@color;">@value</span>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* GRADES CARD *@
+    <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:16px;color:#0f172a;">
+            📚 Course Grades
+        </div>
+        @if (((DataTable)ViewBag.Enrollments).Rows.Count == 0)
+        {
+            <div class="empty-state">
+                <div class="empty-title">No enrollments</div>
+                <div class="empty-sub">Student is not enrolled in any course.</div>
+            </div>
+        }
+        else
+        {
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                @foreach (DataRow row in ((DataTable)ViewBag.Enrollments).Rows)
+                {
+                    string grade = row["grade"].ToString();
+                    string gc = grade == "A+" || grade == "A" || grade == "A-" ? "#4f46e5" :
+                                grade == "B+" || grade == "B" || grade == "B-" ? "#0ea5e9" :
+                                grade == "C+" || grade == "C" || grade == "C-" ? "#d97706" : "#ef4444";
+                    string gb = grade == "A+" || grade == "A" || grade == "A-" ? "#eff6ff" :
+                                grade == "B+" || grade == "B" || grade == "B-" ? "#e0f2fe" :
+                                grade == "C+" || grade == "C" || grade == "C-" ? "#fef3c7" : "#fef2f2";
+                    <div style="display:flex;justify-content:space-between;align-items:center;
+                        padding:10px 12px;background:#f8fafc;border-radius:8px;">
+                        <span style="font-size:13px;font-weight:500;color:#0f172a;">@row["cname"]</span>
+                        <span style="background:@gb;color:@gc;padding:4px 14px;
+                        border-radius:20px;font-size:13px;font-weight:700;">@grade</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

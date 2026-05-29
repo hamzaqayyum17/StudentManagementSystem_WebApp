@@ -1,20 +1,61 @@
 @model List<StudentManagementSystem.Models.Attendance>
 @{ ViewData["Title"] = "My Attendance"; }
-<div class="page-header"><div><div class="page-title">My Attendance</div><div class="page-subtitle">Your attendance history</div></div></div>
-<div class="stat-grid" style="grid-template-columns:repeat(4,1fr);">
-    <div class="stat-card" style="border-top:3px solid #64748b;"><div class="stat-card-label">Total Days</div><div class="stat-card-value" style="color:#64748b;">@ViewBag.Total</div></div>
-    <div class="stat-card" style="border-top:3px solid #10b981;"><div class="stat-card-label">Present</div><div class="stat-card-value green">@ViewBag.Present</div></div>
-    <div class="stat-card" style="border-top:3px solid #ef4444;"><div class="stat-card-label">Absent</div><div class="stat-card-value red">@ViewBag.Absent</div></div>
-    <div class="stat-card" style="border-top:3px solid #f59e0b;"><div class="stat-card-label">Late</div><div class="stat-card-value amber">@ViewBag.Late</div></div>
+
+<div class="page-header">
+    <div>
+        <div class="page-title">My Attendance</div>
+        <div class="page-subtitle">Your attendance history</div>
+    </div>
+
+    {{!-- Student ki class ki Sheet open karne ka button --}}
+    <button onclick="openMySheet()" id="btnMySheet"
+            class="btn-primary-custom"
+            style="background:#0ea5e9;display:none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" y1="14" x2="21" y2="3"/>
+        </svg>
+        View in Google Sheet
+    </button>
 </div>
+
+<div class="stat-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="stat-card" style="border-top:3px solid #64748b;">
+        <div class="stat-card-label">Total Days</div>
+        <div class="stat-card-value" style="color:#64748b;">@ViewBag.Total</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #10b981;">
+        <div class="stat-card-label">Present</div>
+        <div class="stat-card-value green">@ViewBag.Present</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #ef4444;">
+        <div class="stat-card-label">Absent</div>
+        <div class="stat-card-value red">@ViewBag.Absent</div>
+    </div>
+    <div class="stat-card" style="border-top:3px solid #f59e0b;">
+        <div class="stat-card-label">Late</div>
+        <div class="stat-card-value amber">@ViewBag.Late</div>
+    </div>
+</div>
+
 @if (ViewBag.Total > 0) {
     var pct = (int)((ViewBag.Present / (double)ViewBag.Total) * 100);
     var pctColor = pct >= 75 ? "#10b981" : pct >= 50 ? "#f59e0b" : "#ef4444";
     <div class="card" style="margin-bottom:20px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:13px;font-weight:600;">Attendance Percentage</span><span style="font-size:14px;font-weight:700;color:@pctColor;">@pct%</span></div>
-        <div style="height:8px;background:#f1f5f9;border-radius:99px;overflow:hidden;"><div style="height:100%;width:@pct%;background:@pctColor;border-radius:99px;transition:width 0.8s;"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:13px;font-weight:600;">Attendance Percentage</span>
+            <span style="font-size:14px;font-weight:700;color:@pctColor;">@pct%</span>
+        </div>
+        <div style="height:8px;background:#f1f5f9;border-radius:99px;overflow:hidden;">
+            <div style="height:100%;width:@pct%;background:@pctColor;border-radius:99px;transition:width 0.8s;"></div>
+        </div>
+        @if (pct < 75) {
+            <div style="font-size:11px;color:#ef4444;margin-top:6px;">&#9888; Attendance 75% se kam hai!</div>
+        }
     </div>
 }
+
 <div class="table-wrapper">
     <div class="table-toolbar"><div class="table-title">Attendance History</div></div>
     <table class="data-table">
@@ -25,12 +66,35 @@
                     <td style="font-family:'DM Mono',monospace;font-size:13px;">@a.date.ToString("dd MMM yyyy")</td>
                     <td style="color:#64748b;">@a.date.ToString("dddd")</td>
                     <td>
-                        @if (a.status=="Present")    { <span class="badge-present">✓ Present</span> }
-                        else if (a.status=="Absent") { <span class="badge-absent">✗ Absent</span> }
-                        else                         { <span class="badge-late">⏰ Late</span> }
+                        @if (a.status=="Present")      { <span class="badge-present">&#10003; Present</span> }
+                        else if (a.status=="Absent")   { <span class="badge-absent">&#10007; Absent</span>  }
+                        else                           { <span class="badge-late">&#8987; Late</span>       }
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+@section Scripts {
+<script>
+    // Page load pe student ki class ka Sheet link fetch karo
+    window.addEventListener('load', function () {
+        fetch('/Attendance/GetMySheetLink')
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    var btn = document.getElementById('btnMySheet');
+                    btn.style.display = 'inline-flex';
+                    btn.setAttribute('data-url', data.url);
+                }
+            });
+    });
+
+    function openMySheet() {
+        var btn = document.getElementById('btnMySheet');
+        var url = btn.getAttribute('data-url');
+        if (url) window.open(url, '_blank');
+    }
+</script>
+}

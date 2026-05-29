@@ -46,6 +46,8 @@
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
+                    <th>Class</th>
+                    <th>Section</th>
                     <th>City</th>
                     <th>Email</th>
                     <th>Actions</th>
@@ -55,7 +57,11 @@
                 @foreach (var s in Model)
                 {
                     <tr>
-                        <td><span style="font-family:'DM Mono',monospace;font-size:12px;color:#94a3b8;">@s.sid</span></td>
+                        <td>
+                            <span style="font-family:'DM Mono',monospace;font-size:12px;background:#f1f5f9;padding:3px 8px;border-radius:6px;color:#4f46e5;font-weight:600;">
+                                @(s.rollNumber ?? "-")
+                            </span>
+                        </td>
                         <td>
                             <div style="display:flex;align-items:center;gap:10px;">
                                 <div style="width:32px;height:32px;background:#eff6ff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#4f46e5;">
@@ -64,14 +70,28 @@
                                 <span style="font-weight:500;">@s.name</span>
                             </div>
                         </td>
+                        <td style="color:#64748b;">@(s.className ?? "-")</td>
+                        <td>
+                            @if (s.sectionName != null)
+                            {
+                                <span style="background:#f0fdf4;color:#059669;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;">@s.sectionName</span>
+                            }
+                            else
+                            {
+                                <span style="color:#94a3b8;">-</span>
+                            }
+                        </td>
                         <td style="color:#64748b;">@s.city</td>
                         <td style="color:#64748b;font-size:13px;">@s.email</td>
                         <td>
                             <div style="display:flex;gap:6px;">
                                 <a asp-controller="Student" asp-action="Detail" asp-route-sid="@s.sid" class="btn-edit">View</a>
                                 <a asp-controller="Student" asp-action="Edit" asp-route-sid="@s.sid" class="btn-edit" style="background:#f0fdf4;color:#15803d;">Edit</a>
+                                <a asp-controller="Report" asp-action="ResultCard" asp-route-sid="@s.sid"
+                                   class="btn-edit" style="background:#fef2f2;color:#ef4444;"
+                                   target="_blank">PDF</a>
                                 <a asp-controller="Student" asp-action="Delete" asp-route-sid="@s.sid" class="btn-delete"
-                                   onclick="return confirm('Delete @s.name? This cannot be undone.')">Delete</a>
+                                   onclick="return confirm('Delete @s.name?')">Delete</a>
                             </div>
                         </td>
                     </tr>

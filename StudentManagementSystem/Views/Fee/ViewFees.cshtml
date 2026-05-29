@@ -22,9 +22,21 @@
                         <td style="color:#64748b;font-size:13px;">@(f.paidDate.HasValue ? f.paidDate.Value.ToString("dd MMM yyyy") : "-")</td>
                         <td>
                             <div style="display:flex;gap:6px;">
-                                @if (f.status == "Unpaid") { <a asp-controller="Fee" asp-action="MarkPaid" asp-route-fid="@f.fid" class="btn-paid" onclick="return confirm('Mark as Paid?')">Mark Paid</a> }
-                                <a asp-controller="Fee" asp-action="DeleteFee" asp-route-fid="@f.fid" class="btn-delete" onclick="return confirm('Delete?')">Delete</a>
-                            </div>
+                            @if (f.status == "Unpaid") {
+                                <a asp-controller="Fee" asp-action="MarkPaid"
+                                   asp-route-fid="@f.fid" class="btn-paid"
+                                    onclick="return confirm('Mark as Paid?')">Mark Paid</a>
+                                <a asp-controller="Fee" asp-action="SendFeeReminder"
+                                   asp-route-fid="@f.fid"
+                                   class="btn-edit" style="background:#fef3c7;color:#d97706;"
+                                   onclick="return confirm('Send fee reminder email?')">
+                                    📧 Remind
+                                </a>
+                            }
+                            <a asp-controller="Fee" asp-action="DeleteFee"
+                               asp-route-fid="@f.fid" class="btn-delete"
+                               onclick="return confirm('Delete?')">Delete</a>
+                        </div>
                         </td>
                     </tr>
                 }

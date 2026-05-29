@@ -21,7 +21,19 @@
                     <td style="font-weight:500;">@e.studentName</td>
                     <td style="color:#64748b;">@e.courseName</td>
                     <td><span style="background:@gb;color:@gc;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;">@grade</span></td>
-                    <td><a asp-controller="Enrollment" asp-action="Delete" asp-route-eid="@e.eid" class="btn-delete" onclick="return confirm('Delete this enrollment?')">Delete</a></td>
+                    <td>
+                        <div style="display:flex;gap:6px;">
+                            <a asp-controller="Enrollment" asp-action="SendResultEmail"
+                                   asp-route-eid="@e.eid"
+                                   class="btn-edit" style="background:#fef3c7;color:#d97706;"
+                                   onclick="return confirm('Send result email to student?')">
+                                📧 Email
+                            </a>
+                            <a asp-controller="Enrollment" asp-action="Delete"
+                               asp-route-eid="@e.eid" class="btn-delete"
+                               onclick="return confirm('Delete this enrollment?')">Delete</a>
+                        </div>
+                    </td>
                 </tr>
             }
         </tbody>

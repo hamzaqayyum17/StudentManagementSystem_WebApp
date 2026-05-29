@@ -1,25 +1,82 @@
-﻿@model StudentManagementSystem.Models.Class
+﻿@model List<StudentManagementSystem.Models.Section>
 @{
-    ViewData["Title"] = "Edit Class";
+    ViewData["Title"] = "Sections";
 }
 <div class="page-header">
     <div>
-        <div class="page-title">Edit Class</div>
-        <div class="page-subtitle">Update class name</div>
+        <div class="page-title">@ViewBag.ClassName — Sections</div>
+        <div class="page-subtitle">@Model.Count section(s) in this class</div>
     </div>
-    <a asp-controller="Class" asp-action="ViewClasses" class="btn-back">&larr; Back</a>
+    <a asp-controller="Class" asp-action="ViewClasses" class="btn-back">&larr; Back to Classes</a>
 </div>
 
-<div class="form-card">
-    <form method="post">
-        @Html.HiddenFor(m => m.classId)
-        <div class="form-group">
-            <label class="form-label">Class Name</label>
-            @Html.TextBoxFor(m => m.className, new { @class = "form-control-custom" })
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+    <div class="form-card" style="max-width:100%;">
+        <div style="font-size:14px;font-weight:600;margin-bottom:16px;">Add New Section</div>
+        <form method="post" asp-controller="Class" asp-action="AddSection">
+            <input type="hidden" name="classId" value="@ViewBag.ClassId" />
+            <div class="form-group">
+                <label class="form-label">Section Name</label>
+                <input type="text" name="sectionName" class="form-control-custom"
+                       placeholder="e.g. A, B, C" maxlength="5" />
+            </div>
+            <button type="submit" class="btn-primary-custom">Add Section</button>
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <div class="table-toolbar">
+            <div>
+                <div class="table-title">Sections</div>
+                <div class="table-count">@Model.Count sections</div>
+            </div>
         </div>
-        <div style="display:flex;gap:10px;margin-top:8px;">
-            <button type="submit" class="btn-primary-custom">Save Changes</button>
-            <a asp-controller="Class" asp-action="ViewClasses" class="btn-back">Cancel</a>
-        </div>
-    </form>
+        @if (Model.Count == 0)
+        {
+            <div class="empty-state">
+                <div class="empty-title">No sections yet</div>
+                <div class="empty-sub">Add a section from the form.</div>
+            </div>
+        }
+        else
+        {
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Section</th>
+                        <th>Class</th>
+                        <th>Students</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span style="width:32px;height:32px;background:#eff6ff;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#4f46e5;">
+                                    @s.sectionName
+                                </span>
+                            </td>
+                            <td style="color:#64748b;">@s.className</td>
+                            <td>
+                                <a asp-controller="Class" asp-action="ClassStudents"
+                                   asp-route-classId="@s.classId"
+                                   asp-route-sectionId="@s.sectionId"
+                                   class="btn-paid">Students</a>
+                            </td>
+                            <td>
+                                <a asp-controller="Class" asp-action="DeleteSection"
+                                   asp-route-sectionId="@s.sectionId"
+                                   asp-route-classId="@s.classId"
+                                   class="btn-delete"
+                                   onclick="return confirm('Delete Section @s.sectionName?')">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
 </div>

@@ -11,7 +11,7 @@
     <a asp-controller="Class" asp-action="ViewClasses" class="btn-back">&larr; Back</a>
 </div>
 
-{{!-- Section Filter --}}
+@* Section Filter *@
 <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
     <a asp-controller="Class" asp-action="ClassStudents"
            asp-route-classId="@ViewBag.ClassId"

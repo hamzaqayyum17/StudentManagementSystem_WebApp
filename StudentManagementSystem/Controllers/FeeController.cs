@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentManagementSystem.Models;
+using StudentManagementSystem.Services;
 using System.Data;
 
 namespace StudentManagementSystem.Controllers
 {
     public class FeeController : BaseController
     {
+        private readonly EmailService _emailService;
+
+        public FeeController(EmailService emailService)
+        {
+            _emailService = emailService;
+        }
         DBAccess db = new DBAccess();
 
         // ================= ADD FEE =================
@@ -84,6 +91,32 @@ namespace StudentManagementSystem.Controllers
             db.IUD(q);
 
             TempData["msg"] = "Fee Marked as Paid!";
+            return RedirectToAction("ViewFees");
+        }
+        // ================= SEND FEE REMINDER =================
+        public async Task<IActionResult> SendFeeReminder(int fid)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("SignIn", "Student");
+
+            string q = @"select f.month, f.amount, s.name, s.email
+                 from Fee f
+                 join Student s on f.sid = s.sid
+                 where f.fid=" + fid;
+
+            DataTable dt = db.GetDataTable(q);
+
+            if (dt.Rows.Count > 0)
+            {
+                string name = dt.Rows[0]["name"].ToString();
+                string email = dt.Rows[0]["email"].ToString();
+                string month = dt.Rows[0]["month"].ToString();
+                decimal amount = decimal.Parse(dt.Rows[0]["amount"].ToString());
+
+                await _emailService.SendFeeReminderAsync(email, name, month, amount);
+                TempData["msg"] = $"Fee reminder sent to {name}!";
+            }
+
             return RedirectToAction("ViewFees");
         }
 
@@ -176,6 +209,56 @@ namespace StudentManagementSystem.Controllers
             }
 
             return View(list);
+        }
+        // ================= BULK FEE PAGE =================
+        [HttpGet]
+        public IActionResult BulkFee()
+        {
+            if (!IsAdmin())
+                return RedirectToAction("SignIn", "Student");
+
+            // Classes dropdown
+            ViewBag.Classes = db.GetDataTable("select * from Class order by classId");
+
+            return View();
+        }
+
+        // ================= BULK FEE GENERATE =================
+        [HttpPost]
+        public IActionResult BulkFee(string month, decimal amount, int? classId)
+        {
+            if (!IsAdmin())
+                return RedirectToAction("SignIn", "Student");
+
+            // Students fetch karo
+            string q = "select sid from Student where role='student'";
+            if (classId.HasValue)
+                q += " and classId=" + classId.Value;
+
+            DataTable dt = db.GetDataTable(q);
+            int generated = 0;
+
+            foreach (DataRow row in dt.Rows)
+            {
+                string sid = row["sid"].ToString();
+
+                // Already exist karta hai is month ka?
+                string checkQ = "select count(*) from Fee " +
+                                "where sid='" + sid + "' and month='" + month + "'";
+                int count = int.Parse(db.GetDataTable(checkQ).Rows[0][0].ToString());
+
+                if (count == 0)
+                {
+                    string insertQ = "insert into Fee(sid, month, amount, status) " +
+                                     "values('" + sid + "','" + month + "'," +
+                                     amount + ",'Unpaid')";
+                    db.IUD(insertQ);
+                    generated++;
+                }
+            }
+
+            TempData["msg"] = $"{generated} fee records generated for {month}!";
+            return RedirectToAction("ViewFees");
         }
     }
 }

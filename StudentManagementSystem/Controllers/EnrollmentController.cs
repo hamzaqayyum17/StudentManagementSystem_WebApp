@@ -1,11 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentManagementSystem.Models;
+using StudentManagementSystem.Services;
 using System.Data;
 
 namespace StudentManagementSystem.Controllers
 {
     public class EnrollmentController : Controller
     {
+        private readonly EmailService _emailService;
+
+        public EnrollmentController(EmailService emailService)
+        {
+            _emailService = emailService;
+        }
         DBAccess db = new DBAccess();
 
         // ================= ADD ENROLLMENT =================
@@ -74,6 +81,34 @@ namespace StudentManagementSystem.Controllers
 
             string q = "delete from Enrollment where eid=" + eid;
             db.IUD(q);
+            return RedirectToAction("ViewEnrollment");
+        }
+
+        // ================= SEND RESULT EMAIL =================
+        public async Task<IActionResult> SendResultEmail(int eid)
+        {
+            if (HttpContext.Session.GetString("role") != "admin")
+                return RedirectToAction("SignIn", "Student");
+
+            string q = @"select s.name, s.email, c.cname, e.grade
+                 from Enrollment e
+                 join Student s on e.sid = s.sid
+                 join Course  c on e.cid = c.cid
+                 where e.eid=" + eid;
+
+            DataTable dt = db.GetDataTable(q);
+
+            if (dt.Rows.Count > 0)
+            {
+                string name = dt.Rows[0]["name"].ToString();
+                string email = dt.Rows[0]["email"].ToString();
+                string course = dt.Rows[0]["cname"].ToString();
+                string grade = dt.Rows[0]["grade"].ToString();
+
+                await _emailService.SendResultEmailAsync(email, name, course, grade);
+                TempData["msg"] = $"Result email sent to {name}!";
+            }
+
             return RedirectToAction("ViewEnrollment");
         }
     }

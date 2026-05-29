@@ -1,111 +1,68 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StudentManagementSystem.Models;
+using StudentManagementSystem.Services;
 using System.Data;
 
 namespace StudentManagementSystem.Controllers
 {
     public class AttendanceController : BaseController
     {
-        DBAccess db = new DBAccess();
+        private readonly GoogleSheetsService _sheetsService;
+        private readonly EmailService _emailService;
 
-        // ================= MARK ATTENDANCE =================
-        [HttpGet]
-        public IActionResult MarkAttendance()
+        public AttendanceController(
+            GoogleSheetsService sheetsService,
+            EmailService emailService)
         {
-            if (HttpContext.Session.GetString("role") != "teacher")
-                return RedirectToAction("TeacherSignIn", "Teacher");
-
-            // Sare students lao
-            string q = "select sid, name from Student where role='student'";
-            DataTable dt = db.GetDataTable(q);
-            ViewBag.Students = dt;
-
-            return View();
+            _sheetsService = sheetsService;
+            _emailService = emailService;
         }
-
-        [HttpPost]
-        public IActionResult MarkAttendance(IFormCollection form)
+        // ================= SYNC FROM GOOGLE SHEETS =================
+        public async Task<IActionResult> SyncFromGoogleSheet()
         {
-            if (HttpContext.Session.GetString("role") != "teacher")
-                return RedirectToAction("TeacherSignIn", "Teacher");
+            if (!IsAdmin() && HttpContext.Session.GetString("role") != "teacher")
+                return RedirectToAction("SignIn", "Student");
 
-            string tid = HttpContext.Session.GetString("sid");
-            string date = DateTime.Now.ToString("yyyy-MM-dd");
-
-            // Sare students ki list lo
-            string q = "select sid from Student where role='student'";
-            DataTable dt = db.GetDataTable(q);
-
-            foreach (DataRow row in dt.Rows)
+            try
             {
-                string sid = row["sid"].ToString();
-                string status = form["status_" + sid].ToString();
-
-                if (string.IsNullOrEmpty(status))
-                    status = "Absent";
-
-                // Pehle check karo — aaj ki attendance already hai?
-                string checkQ = "select count(*) from Attendance where sid='" + sid +
-                                "' and date='" + date + "'";
-                int count = int.Parse(db.GetDataTable(checkQ).Rows[0][0].ToString());
-
-                if (count == 0)
-                {
-                    // Nai entry
-                    string insertQ = "insert into Attendance(sid, date, status, markedBy)" +
-                                     " values('" + sid + "','" + date + "','" +
-                                     status + "','" + tid + "')";
-                    db.IUD(insertQ);
-                }
-                else
-                {
-                    // Update karo agar pehle se hai
-                    string updateQ = "update Attendance set status='" + status +
-                                     "', markedBy='" + tid +
-                                     "' where sid='" + sid +
-                                     "' and date='" + date + "'";
-                    db.IUD(updateQ);
-                }
+                int synced = await _sheetsService.SyncAttendanceAsync();
+                TempData["msg"] = $"Sync Complete! {synced} new records added.";
+            }
+            catch (Exception ex)
+            {
+                TempData["error"] = "Sync failed: " + ex.Message;
             }
 
-            TempData["msg"] = "Attendance Saved Successfully!";
             return RedirectToAction("ViewAttendance");
         }
+        DBAccess db = new DBAccess();
 
         // ================= VIEW ATTENDANCE (Admin) =================
-        public IActionResult ViewAttendance()
+        public IActionResult ViewAttendance(int? classId)
         {
             if (!IsLoggedIn())
                 return RedirectToAction("SignIn", "Student");
 
+            ViewBag.Classes = db.GetDataTable("select classId, className from Class order by classId");
+            ViewBag.SelectedClass = classId;
+
             string role = HttpContext.Session.GetString("role");
-
             List<Attendance> list = new List<Attendance>();
-            string q = "";
 
-            if (role == "admin")
-            {
-                // Admin — sab dekhe
-                q = @"select a.aid, s.name as studentName, 
-                             a.date, a.status, a.markedBy
-                      from Attendance a
-                      join Student s on a.sid = s.sid
-                      order by a.date desc";
-            }
-            else if (role == "teacher")
-            {
-                // Teacher — sirf apni marked attendance
-                string tid = HttpContext.Session.GetString("sid");
-                q = @"select a.aid, s.name as studentName,
-                             a.date, a.status, a.markedBy
-                      from Attendance a
-                      join Student s on a.sid = s.sid
-                      where a.markedBy='" + tid + @"'
-                      order by a.date desc";
-            }
+            string q = @"select a.aid, s.name as studentName,
+                        a.date, a.status, a.markedBy,
+                        cl.className
+                 from Attendance a
+                 join Student s on a.sid = s.sid
+                 left join Class cl on s.classId = cl.classId
+                 where 1=1";
+
+            if (classId.HasValue)
+                q += " and s.classId=" + classId.Value;
+
+            q += " order by a.date desc";
 
             DataTable dt = db.GetDataTable(q);
-
             foreach (DataRow row in dt.Rows)
             {
                 Attendance a = new Attendance();
@@ -116,10 +73,8 @@ namespace StudentManagementSystem.Controllers
                 a.markedBy = row["markedBy"].ToString();
                 list.Add(a);
             }
-
             return View(list);
         }
-
         // ================= MY ATTENDANCE (Student) =================
         public IActionResult MyAttendance()
         {
@@ -175,5 +130,112 @@ namespace StudentManagementSystem.Controllers
             TempData["msg"] = "Record Deleted!";
             return RedirectToAction("ViewAttendance");
         }
+        // ================= SEND ABSENT EMAIL =================
+        public async Task<IActionResult> SendAbsentEmail(int aid)
+        {
+            if (!IsAdmin() && HttpContext.Session.GetString("role") != "teacher")
+                return RedirectToAction("SignIn", "Student");
+
+            string q = @"select s.name, s.email, a.date
+                 from Attendance a
+                 join Student s on a.sid = s.sid
+                 where a.aid=" + aid;
+
+            DataTable dt = db.GetDataTable(q);
+
+            if (dt.Rows.Count > 0)
+            {
+                string name = dt.Rows[0]["name"].ToString();
+                string email = dt.Rows[0]["email"].ToString();
+                string date = DateTime.Parse(dt.Rows[0]["date"].ToString())
+                                       .ToString("dd MMM yyyy");
+
+                await _emailService.SendAbsentEmailAsync(email, name, date);
+                TempData["msg"] = $"Absent notification sent to {name}!";
+            }
+
+            return RedirectToAction("ViewAttendance");
+        }
+
+        // ================= SYNC BY CLASS =================
+        public async Task<IActionResult> SyncByClass(int classId)
+        {
+            if (!IsAdmin() && HttpContext.Session.GetString("role") != "teacher")
+                return RedirectToAction("SignIn", "Student");
+            try
+            {
+                int synced = await _sheetsService.SyncClassAttendanceAsync(classId);
+                TempData["msg"] = $"Sync Complete! {synced} new records added.";
+            }
+            catch (Exception ex)
+            {
+                TempData["msg"] = "Error: " + ex.Message;
+            }
+            return RedirectToAction("ViewAttendance");
+        }
+        // ================= GET SHEET URL =================
+        public IActionResult OpenSheet(int classId)
+        {
+            if (!IsLoggedIn())
+                return RedirectToAction("SignIn", "Student");
+
+            string q = "select googleSheetId, className from Class where classId=" + classId;
+            DataTable dt = db.GetDataTable(q);
+
+            if (dt.Rows.Count > 0 && dt.Rows[0]["googleSheetId"] != DBNull.Value)
+            {
+                string sheetId = dt.Rows[0]["googleSheetId"].ToString();
+                string url = "https://docs.google.com/spreadsheets/d/" + sheetId + "/edit";
+                return Redirect(url);
+            }
+
+            TempData["error"] = "Is class ki Google Sheet set nahi hai!";
+            return RedirectToAction("ViewAttendance");
+        }
+
+        public IActionResult GetSheetLink(int classId)
+        {
+            if (!IsLoggedIn())
+                return RedirectToAction("SignIn", "Student");
+
+            string q = "select googleSheetId from Class where classId=" + classId;
+            DataTable dt = db.GetDataTable(q);
+
+            if (dt.Rows.Count > 0 && dt.Rows[0]["googleSheetId"] != DBNull.Value)
+            {
+                string sheetId = dt.Rows[0]["googleSheetId"].ToString();
+                string url = "https://docs.google.com/spreadsheets/d/" + sheetId + "/edit";
+                return Json(new { success = true, url = url });
+            }
+
+            return Json(new { success = false, message = "Is class ki Google Sheet set nahi hai." });
+        }
+
+
+        public IActionResult GetMySheetLink()
+        {
+            if (!IsLoggedIn())
+                return RedirectToAction("SignIn", "Student");
+
+            string sid = HttpContext.Session.GetString("sid");
+
+            // Student ki class ka googleSheetId fetch karo
+            string q = @"select c.googleSheetId 
+                 from Student s
+                 join Class c on s.classId = c.classId
+                 where s.sid='" + sid + "'";
+
+            DataTable dt = db.GetDataTable(q);
+
+            if (dt.Rows.Count > 0 && dt.Rows[0]["googleSheetId"] != DBNull.Value)
+            {
+                string sheetId = dt.Rows[0]["googleSheetId"].ToString();
+                string url = "https://docs.google.com/spreadsheets/d/" + sheetId + "/edit";
+                return Json(new { success = true, url = url });
+            }
+
+            return Json(new { success = false, message = "Aapki class ki Google Sheet set nahi hai." });
+        }
     }
+
 }

@@ -185,5 +185,22 @@ namespace StudentManagementSystem.Controllers
             }
             return View(list);
         }
+        // ================= GET SECTIONS (AJAX) =================
+        public IActionResult GetSections(int classId)
+        {
+            DataTable dt = db.GetDataTable(
+                "select sectionId, sectionName from Section where classId=" + classId);
+
+            List<object> list = new List<object>();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new
+                {
+                    sectionId = row["sectionId"].ToString(),
+                    sectionName = row["sectionName"].ToString()
+                });
+            }
+            return Json(list);
+        }
     }
 }

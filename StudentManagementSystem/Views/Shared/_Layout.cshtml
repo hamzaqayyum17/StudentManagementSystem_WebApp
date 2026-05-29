@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -33,7 +33,7 @@
         /* TOPBAR */
         .topbar { position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h); background: var(--brand); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; z-index: 200; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .topbar-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .brand-icon { width: 34px; height: 34px; background: var(--accent); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #fff; }
+        .brand-icon { width: 80px; height: 34px; background: var(--accent); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; color: #fff; }
         .brand-text { font-size: 15px; font-weight: 600; color: #fff; letter-spacing: -0.3px; }
         .brand-sub { font-size: 10px; color: #64748b; letter-spacing: 1.5px; text-transform: uppercase; }
         .topbar-right { display: flex; align-items: center; gap: 16px; }
@@ -143,8 +143,8 @@
 
     <div class="topbar">
         <a class="topbar-brand" asp-controller="Home" asp-action="Index">
-            <div class="brand-icon">E</div>
-            <div><div class="brand-text">EduTrack</div><div class="brand-sub">Student MS</div></div>
+            <div class="brand-icon">TANOLI</div>
+            <div><div class="brand-text">EduTrack</div><div class="brand-sub">Student Management System</div></div>
         </a>
         <div class="topbar-right">
             @if (name != null)
@@ -186,6 +186,10 @@
                 </div>
                 <div class="sidebar-section">
                     <div class="sidebar-label">Academics</div>
+                    <a asp-controller="Class" asp-action="ViewClasses" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+                        Classes & Sections
+                    </a>
                     <a asp-controller="Course" asp-action="ViewCourses" class="nav-link">
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                         Courses
@@ -205,9 +209,20 @@
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                         Fee Management
                     </a>
+                    <a asp-controller="Fee" asp-action="BulkFee" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                        Bulk Fee Generate
+                    </a>
                     <a asp-controller="Fee" asp-action="UnpaidFees" class="nav-link">
                         <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                         Unpaid Fees
+                    </a>
+                </div>
+                <div class="sidebar-section">
+                    <div class="sidebar-label">Reports</div>
+                    <a asp-controller="Student" asp-action="AllStudents" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        Result Cards
                     </a>
                 </div>
             }
@@ -222,8 +237,8 @@
                 </div>
                 <div class="sidebar-section">
                     <div class="sidebar-label">Attendance</div>
-                    <a asp-controller="Attendance" asp-action="MarkAttendance" class="nav-link">
-                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>
+                    <a asp-controller="Teacher" asp-action="TeacherDashboard" class="nav-link">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                         Mark Attendance
                     </a>
                     <a asp-controller="Attendance" asp-action="ViewAttendance" class="nav-link">
@@ -270,7 +285,7 @@
     <div class="main-content @(sid == null ? "no-sidebar" : "")">
         @if (TempData["msg"] != null)
         {
-            <div class="alert-success">✓ &nbsp;@TempData["msg"]</div>
+            <div class="alert-success">&#10003; &nbsp;@TempData["msg"]</div>
         }
         @RenderBody()
     </div>

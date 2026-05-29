@@ -147,8 +147,6 @@ namespace StudentManagementSystem.Controllers
             ViewBag.Error = "Invalid ID or Password";
             return View();
         }
-
-        // ================= TEACHER DASHBOARD =================
         public IActionResult TeacherDashboard()
         {
             if (HttpContext.Session.GetString("role") != "teacher")
@@ -157,14 +155,17 @@ namespace StudentManagementSystem.Controllers
             string tid = HttpContext.Session.GetString("sid");
             ViewBag.Name = HttpContext.Session.GetString("name");
 
-            // Aaj ki attendance count
+         
             string q1 = "select count(*) from Attendance where markedBy='" + tid +
                         "' and date=CAST(GETDATE() AS DATE)";
             ViewBag.TodayAttendance = db.GetDataTable(q1).Rows[0][0];
 
-            // Total students
+         
             string q2 = "select count(*) from Student where role='student'";
             ViewBag.TotalStudents = db.GetDataTable(q2).Rows[0][0];
+
+         
+            ViewBag.Classes = db.GetDataTable("select classId, className from Class order by classId");
 
             return View();
         }
