@@ -1,44 +1,153 @@
-# Student Management System (ASP.NET MVC)
+# EduTrack — Student Management System
 
-A web-based Student Management System built using ASP.NET MVC.
-This project helps manage students, teachers, courses, attendance, and fees in an organized way.
+A full-featured web-based Student Management System built with **ASP.NET Core MVC (.NET 8)**.
+Designed to manage students, teachers, courses, attendance via Google Sheets, and fee records — with role-based dashboards for Admin, Teacher, and Student.
 
-# 🚀 Features
-👨‍🎓 Student Management (Add, Edit, View)
-👨‍🏫 Teacher Management
-📚 Course Management
-📝 Attendance System
-💰 Fee Management
-🔐 Authentication (Sign In / Sign Up)
-📊 Dashboards (Admin / Student / Teacher)
+---
 
-# 🛠️ Technologies Used
-ASP.NET MVC (.NET)
-C#
-SQL Server
-HTML, CSS, Bootstrap
-JavaScript
+## 🚀 Features
 
-# 🛠️ Technologies Used
-ASP.NET MVC (.NET)
-C#
-SQL Server
-HTML, CSS, Bootstrap
-JavaScript
+### 👨‍💼 Admin
+- Full dashboard with stats (students, teachers, courses, fees)
+- Student & Teacher CRUD (Add, Edit, Delete, View)
+- Class & Section management
+- Course & Enrollment management
+- Attendance sync from Google Sheets
+- Fee management — individual & bulk generation
+- Unpaid fee tracking & email reminders
+- PDF Result Card generation per student
+- Student Progress Reports
 
-# ⚙️ How to Run
+### 👨‍🏫 Teacher
+- Teacher dashboard with today's attendance count
+- Mark attendance directly via Google Sheets
+- Sync attendance from Sheet to database
 
-Clone the repository:
+### 👨‍🎓 Student
+- Personal dashboard — attendance %, pending fees, enrolled courses
+- View attendance history with progress bar
+- View fee records (paid/unpaid)
+- Download PDF Result Card
+- View Progress Report
 
+---
+
+## 🛠️ Technologies Used
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | ASP.NET Core MVC (.NET 8) |
+| Database | Microsoft SQL Server (ADO.NET) |
+| Frontend | Razor Views, Bootstrap 5, JavaScript |
+| Auth | Session-based Role Authentication |
+| Attendance | Google Sheets API v4 |
+| Email | Gmail SMTP (MailKit) |
+| PDF | iTextSharp |
+
+---
+
+## ⚙️ How to Run
+
+### 1. Clone the Repository
+```bash
 git clone https://github.com/your-username/StudentManagementSystem_WebApp.git
-Open in Visual Studio
+cd StudentManagementSystem_WebApp
+```
 
-Configure database in:
+### 2. Configure Database
+- Open **SQL Server Management Studio**
+- Run the SQL script in `/Database/StudentDB.sql` to create and populate the database
 
-appsettings.json
-Run the project
+### 3. Update appsettings.json
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=YOUR_SERVER;Initial Catalog=StudentDB;Integrated Security=True;TrustServerCertificate=True;"
+  },
+  "GoogleSheets": {
+    "SpreadsheetId": "YOUR_GOOGLE_SHEET_ID",
+    "CredentialsPath": "Credentials/your-credentials.json",
+    "SheetName": "Sheet1"
+  },
+  "EmailSettings": {
+    "Host": "smtp.gmail.com",
+    "Port": 587,
+    "Email": "your-email@gmail.com",
+    "Password": "your-app-password",
+    "DisplayName": "EduTrack SMS"
+  }
+}
+```
 
-# 📧 Contact
+### 4. Google Sheets Setup
+- Create a Google Cloud project and enable **Google Sheets API**
+- Download credentials JSON and place in `/Credentials/` folder
+- Share your attendance Google Sheet with the service account email
 
-Developed by Hamza Qayyum
+### 5. Run the Project
+- Open in **Visual Studio 2022**
+- Build and run (`F5`)
+- Default login page opens at `/Student/SignIn`
+
+---
+
+## 👥 Default Login Credentials
+
+| Role | ID | Password |
+|------|----|----------|
+| Admin | admin1 | 123 |
+| Student | std1 | 123 |
+| Teacher | t1 | 123 |
+
+> ⚠️ Change these credentials before deploying to production.
+
+---
+
+## 📁 Project Structure
+
+```
+StudentManagementSystem/
+├── Controllers/
+│   ├── StudentController.cs
+│   ├── TeacherController.cs
+│   ├── AttendanceController.cs
+│   ├── FeeController.cs
+│   ├── CourseController.cs
+│   ├── EnrollmentController.cs
+│   ├── ClassController.cs
+│   ├── ReportController.cs
+│   └── BaseController.cs
+├── Models/
+│   ├── Student.cs
+│   ├── Teacher.cs
+│   ├── Attendance.cs
+│   ├── Fee.cs
+│   ├── Course.cs
+│   ├── Enrollment.cs
+│   ├── Class.cs
+│   ├── Section.cs
+│   └── DBAccess.cs
+├── Views/
+│   ├── Student/
+│   ├── Teacher/
+│   ├── Attendance/
+│   ├── Fee/
+│   ├── Course/
+│   ├── Enrollment/
+│   ├── Class/
+│   ├── Report/
+│   └── Shared/
+├── Services/
+│   ├── GoogleSheetsService.cs
+│   └── EmailService.cs
+├── Credentials/
+│   └── (Google API credentials — not included in repo)
+└── appsettings.json
+```
+
+---
+
+## 📧 Contact
+
+**Developed by Hamza Qayyum**
 Email: hamzaqayyum909@gmail.com
